@@ -8,7 +8,6 @@ const FeateredProducts = () => {
         <ProductCard />
         <ProductCard />
         <ProductCard />
-        <ProductCard />
       </div>
     </section>
   );
