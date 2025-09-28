@@ -1,12 +1,14 @@
 import "./App.css";
-import Navbar from "./components/navbar/Navbar";
-import HomePage from "./components/navbar/Home/HomePage";
+import Navbar from "./components/Navbar/Navbar";
+// import HomePage from "./components/Home/HomePage";
+import ProductsPage from "./components/Products/ProductsPage";
 const App = () => {
   return (
     <div className="app">
       <Navbar />
       <main>
-        <HomePage />
+        {/* <HomePage /> */}
+        <ProductsPage />
       </main>
     </div>
   );
