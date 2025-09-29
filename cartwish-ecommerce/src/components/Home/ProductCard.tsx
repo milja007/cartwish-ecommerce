@@ -1,7 +1,7 @@
 import "./ProductCard.css";
-import iphone from "../../../assets/iphone.jpg";
-import star from "../../../assets/white-star.png";
-import basket from "../../../assets/basket.png";
+import iphone from "../../assets/iphone.jpg";
+import star from "../../assets/white-star.png";
+import basket from "../../assets/basket.png";
 const ProductCard = () => {
   return (
     <article className="product_card">

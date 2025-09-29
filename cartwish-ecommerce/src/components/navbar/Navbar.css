@@ -47,3 +47,14 @@
   font-size: 15px;
   margin-left: 5px;
 }
+
+.search_button {
+  padding: 0 10px;
+  font-size: 20px;
+  font-weight: 500;
+  border: none;
+  background-color: #6457f9;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}

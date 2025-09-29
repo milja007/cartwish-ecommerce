@@ -1,6 +1,6 @@
 import HeroSection from "./HeroSection";
-import iphone from "../../../assets/iphone-14-pro.webp";
-import mac from "../../../assets/mac-system-cut.jfif";
+import iphone from "../../assets/iphone-14-pro.webp";
+import mac from "../../assets/mac-system-cut.jfif";
 import FeateredProducts from "./FeateredProducts";
 const HomePage = () => {
   return (
