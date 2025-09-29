@@ -21,7 +21,7 @@ const CartPage = () => {
             <td>Shipping Charge</td>
             <td>$5</td>
           </tr>
-          <tr>
+          <tr className="cart_bill_final">
             <td>Total</td>
             <td>$1004</td>
           </tr>
