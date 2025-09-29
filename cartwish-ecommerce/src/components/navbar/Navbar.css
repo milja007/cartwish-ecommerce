@@ -26,17 +26,7 @@
   border: none;
   outline: none;
 }
-.search_button {
-  height: 100%;
-  padding: 0 10px;
-  font-size: 20px;
-  font-weight: 500;
-  border: none;
-  background-color: #6457f9;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-}
+
 .navbar_links {
   font-size: 20px;
 }
