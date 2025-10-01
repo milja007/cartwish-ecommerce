@@ -4,6 +4,7 @@ import iphoneProImage from "../../assets/iphone-14-pro.webp";
 import macImage from "../../assets/mac-system-cut.jfif";
 import userImage from "../../assets/user.webp";
 import { useState } from "react";
+import QuantityInput from "./QuantityInput";
 
 const product = {
   id: 1,
@@ -41,12 +42,7 @@ const SingleProductPage = () => {
         <p className="single_product_price">${product.price.toFixed(2)}</p>
         <h2 className="quantity_title">Quantity:</h2>
         <div className="align-center quantity_input">
-          <button className="quantity_input_button" disabled>
-            {" "}
-            -{" "}
-          </button>
-          <p className="quantity_input_count">1</p>
-          <button className="quantity_input_button"> + </button>
+          <QuantityInput />
         </div>
         <button className="search_button add_cart">Add to Cart</button>
       </div>

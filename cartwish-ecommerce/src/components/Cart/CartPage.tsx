@@ -1,5 +1,8 @@
 import "./CartPage.css";
 import user from "../../assets/user.webp";
+import remove from "../../assets/remove.png";
+import Table from "../Common/Table";
+import QuantityInput from "../SingleProduct/QuantityInput";
 const CartPage = () => {
   return (
     <section className="align-center cart_page">
@@ -11,6 +14,26 @@ const CartPage = () => {
         </div>
       </div>
       {/* cart table */}
+      <Table headings={["Item", "Price", "Quantity", "Total", "Remove"]}>
+        <tbody>
+          <tr>
+            <td>Iphone 14</td>
+            <td>$999</td>
+            <td className="align-center table_quantity_input">
+              <QuantityInput />
+            </td>
+            <td>$999</td>
+            <td>
+              <img
+                src={remove}
+                alt="remove icon"
+                className="cart_remove_icon"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+
       <table className="cart_bill">
         <tbody>
           <tr>
