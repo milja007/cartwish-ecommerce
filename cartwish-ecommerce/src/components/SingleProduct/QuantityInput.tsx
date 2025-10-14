@@ -1,4 +1,5 @@
 import "./QuantityInput.css";
+// unoos only commita jer sam delal sa starim od 6 do 8 navecer zivot je tezak
 const QuantityInput = () => {
   return (
     <>
