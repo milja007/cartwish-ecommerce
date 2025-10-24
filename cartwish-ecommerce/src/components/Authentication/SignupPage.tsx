@@ -4,15 +4,14 @@ import "./LoginPage.css";
 import { useForm, type FieldValues } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
 
 const schema = z
   .object({
     name: z.string().min(3, "Name should be at least 3 characters."),
-    email: z.string().email("Please enter a valid email adress"),
+    email: z.string().email("Please enter valid email address"),
     password: z.string().min(8, "Password must be at least 8 characters"),
-    confirmPassword: z
-      .string()
-      .min(8, "Confirm Password must be at least 8 characters"),
+    confirmPassword: z.string(),
 
     deliveryAddress: z
       .string()
@@ -24,6 +23,7 @@ const schema = z
   });
 
 const SignupPage = () => {
+  const [profilePic, setprofilePic] = useState<File | null>(null);
   const {
     register,
     handleSubmit,
@@ -31,6 +31,7 @@ const SignupPage = () => {
   } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = (formData: FieldValues) => console.log(formData);
+  console.log(profilePic);
   return (
     <section className="align-center form_page">
       <form
@@ -41,12 +42,21 @@ const SignupPage = () => {
 
         <div className="image_input_section">
           <div className="image_preview">
-            <img src={user} id="file-ip-1-preview" />
+            {/* URL.createObjectURL(profilePic) is used to create a URL from the profilePic file to display the image in the preview */}
+            <img
+              src={profilePic ? URL.createObjectURL(profilePic) : user}
+              id="file-ip-1-preview"
+            />
           </div>
           <label htmlFor="file-ip-1" className="image_label">
             Upload Image
           </label>
-          <input type="file" id="file-ip-1" className="image_input" />
+          <input
+            type="file"
+            onChange={(e) => setprofilePic(e.target.files?.[0] || null)}
+            id="file-ip-1"
+            className="image_input"
+          />
         </div>
 
         {/* Form Inputs */}
@@ -61,7 +71,7 @@ const SignupPage = () => {
               {...register("name")}
             />
             {errors.name && (
-              <em className="form_error">{errors.name?.message}</em>
+              <em className="form_error">{errors.name.message}</em>
             )}
           </div>
 
@@ -89,7 +99,7 @@ const SignupPage = () => {
               {...register("password")}
             />
             {errors.password && (
-              <em className="form_error">{errors.password?.message}</em>
+              <em className="form_error">{errors.password.message}</em>
             )}
           </div>
 
