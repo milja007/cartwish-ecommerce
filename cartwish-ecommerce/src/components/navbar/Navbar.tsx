@@ -6,6 +6,7 @@ import memo from "../../assets/memo.png";
 import order from "../../assets/basket.png";
 import lock from "../../assets/locked.png";
 import LinkWithIcon from "./LinkWithIcon";
+import { NavLink } from "react-router-dom";
 const Navbar = () => {
   return (
     <nav className="navbar align-center">
@@ -54,9 +55,9 @@ const Navbar = () => {
           emoji={lock}
           sidebar={false}
         />
-        <a href="/cart" className="align-center">
+        <NavLink to="/cart" className="align-center">
           Cart <p className="align-center cart_counts">0</p>
-        </a>
+        </NavLink>
       </div>
     </nav>
   );
