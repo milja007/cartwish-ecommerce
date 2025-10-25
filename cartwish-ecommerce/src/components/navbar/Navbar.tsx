@@ -5,7 +5,7 @@ import idButton from "../../assets/id-button.png";
 import memo from "../../assets/memo.png";
 import order from "../../assets/basket.png";
 import lock from "../../assets/locked.png";
-import Link from "./Link";
+import LinkWithIcon from "./LinkWithIcon";
 const Navbar = () => {
   return (
     <nav className="navbar align-center">
@@ -23,12 +23,37 @@ const Navbar = () => {
         </form>
       </div>
       <div className="navbar_links align-center">
-        <Link title="Home" link="/" emoji={rocket} />
-        <Link title="Products" link="/products" emoji={star} />
-        <Link title="Login" link="/login" emoji={idButton} />
-        <Link title="SignUp" link="/signup" emoji={memo} />
-        <Link title="My Orders" link="/orders" emoji={order} />
-        <Link title="Logout" link="/logout" emoji={lock} />
+        <LinkWithIcon title="Home" link="/" emoji={rocket} sidebar={false} />
+        <LinkWithIcon
+          title="Products"
+          link="/products"
+          emoji={star}
+          sidebar={false}
+        />
+        <LinkWithIcon
+          title="Login"
+          link="/login"
+          emoji={idButton}
+          sidebar={false}
+        />
+        <LinkWithIcon
+          title="SignUp"
+          link="/signup"
+          emoji={memo}
+          sidebar={false}
+        />
+        <LinkWithIcon
+          title="My Orders"
+          link="/orders"
+          emoji={order}
+          sidebar={false}
+        />
+        <LinkWithIcon
+          title="Logout"
+          link="/logout"
+          emoji={lock}
+          sidebar={false}
+        />
         <a href="/cart" className="align-center">
           Cart <p className="align-center cart_counts">0</p>
         </a>

@@ -1,5 +1,5 @@
-import "./Link.css";
-const Link = ({
+import "./LinkWithIcon.css";
+const LinkWithIcon = ({
   title,
   link,
   emoji,
@@ -20,4 +20,4 @@ const Link = ({
   );
 };
 
-export default Link;
+export default LinkWithIcon;

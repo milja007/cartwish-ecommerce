@@ -1,12 +1,12 @@
 import "./ProductsSidebar.css";
-import Link from "../Navbar/Link";
+import LinkWithIcon from "../Navbar/LinkWithIcon";
 import rocket from "../../assets/rocket.png";
 const ProductsSidebar = () => {
   return (
     <aside className="products_sidebar">
       <h2>Category</h2>
       <div className="category_links">
-        <Link
+        <LinkWithIcon
           title="Electronics"
           link="products?category=electronics"
           emoji={rocket}

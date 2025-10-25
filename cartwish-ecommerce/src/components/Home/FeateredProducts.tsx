@@ -1,5 +1,5 @@
 import "./FeateredProducts.css";
-import ProductCard from "./ProductCard";
+import ProductCard from "../Products/ProductCard";
 const FeateredProducts = () => {
   return (
     <section className="featered_products">
