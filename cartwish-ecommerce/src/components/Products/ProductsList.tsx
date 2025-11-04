@@ -1,9 +1,7 @@
 import "./ProductsList.css";
-import { useEffect } from "react";
-import apiClient from "../../utils/api-client";
 import ProductCard from "./ProductCard";
-import { useState } from "react";
-
+import useData from "../../hooks/useData";
+import ProductCardSkeleton from "./ProductCardSkeleton";
 interface Product {
   _id: string;
   title: string;
@@ -17,18 +15,10 @@ interface Product {
 }
 
 const ProductsList = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [error, setError] = useState("");
-  useEffect(() => {
-    apiClient
-      .get("/products")
-      .then((res) => {
-        setProducts(res.data.products);
-      })
-      .catch((err: unknown) => {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      });
-  }, []);
+  const { data, error, isLoading } = useData<{ products: Product[] }>(
+    "/products"
+  );
+  const skeletons = [1, 2, 3, 4, 5, 6, 7, 8];
   return (
     <section className="products_list_section">
       <header className="align_center products_list_header">
@@ -43,18 +33,20 @@ const ProductsList = () => {
       </header>
       <div className="products_list">
         {error && <em className="form_error">{error}</em>}
-        {products.map((product) => (
-          <ProductCard
-            key={product._id}
-            id={product._id}
-            image={product.images[0]}
-            price={product.price}
-            title={product.title}
-            rating={product.reviews.rate}
-            ratingCounts={product.reviews.counts}
-            stock={product.stock}
-          />
-        ))}
+        {isLoading && skeletons.map((n) => <ProductCardSkeleton key={n} />)}
+        {data?.products &&
+          data.products.map((product: Product) => (
+            <ProductCard
+              key={product._id}
+              id={product._id}
+              image={product.images[0]}
+              price={product.price}
+              title={product.title}
+              rating={product.reviews.rate}
+              ratingCounts={product.reviews.counts}
+              stock={product.stock}
+            />
+          ))}
       </div>
     </section>
   );
