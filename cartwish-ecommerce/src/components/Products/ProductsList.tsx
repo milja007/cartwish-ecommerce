@@ -6,11 +6,14 @@ import { useState } from "react";
 
 interface Product {
   _id: string;
-  name?: string;
-  price?: number;
-  image?: string;
-  rating?: number;
-  [key: string]: unknown;
+  title: string;
+  price: number;
+  images: string[];
+  stock: number;
+  reviews: {
+    rate: number;
+    counts: number;
+  };
 }
 
 const ProductsList = () => {
@@ -41,7 +44,16 @@ const ProductsList = () => {
       <div className="products_list">
         {error && <em className="form_error">{error}</em>}
         {products.map((product) => (
-          <ProductCard key={product._id} />
+          <ProductCard
+            key={product._id}
+            id={product._id}
+            image={product.images[0]}
+            price={product.price}
+            title={product.title}
+            rating={product.reviews.rate}
+            ratingCounts={product.reviews.counts}
+            stock={product.stock}
+          />
         ))}
       </div>
     </section>
