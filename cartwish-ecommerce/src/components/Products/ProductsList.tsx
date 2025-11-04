@@ -16,18 +16,25 @@ interface Product {
 }
 
 const ProductsList = () => {
-  const [search] = useSearchParams();
+  const [search, setSearch] = useSearchParams();
   const category = search.get("category") || "";
+  const page = search.get("page") || "1";
   const { data, error, isLoading } = useData<{ products: Product[] }>(
     "/products",
     {
       params: {
         category,
+        page,
       },
     },
-    [category]
+    [category, page]
   );
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8];
+  const handlePageChange = (page: number) => {
+    const currentParams = Object.fromEntries([...search]);
+    console.log(currentParams);
+    setSearch({ ...currentParams, page: String(page) });
+  };
   return (
     <section className="products_list_section">
       <header className="align_center products_list_header">
@@ -56,6 +63,7 @@ const ProductsList = () => {
               stock={product.stock}
             />
           ))}
+        <button onClick={() => handlePageChange(2)}>Page 2</button>
       </div>
     </section>
   );
