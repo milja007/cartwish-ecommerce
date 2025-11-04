@@ -2,6 +2,7 @@ import "./ProductsList.css";
 import ProductCard from "./ProductCard";
 import useData from "../../hooks/useData";
 import ProductCardSkeleton from "./ProductCardSkeleton";
+import { useSearchParams } from "react-router-dom";
 interface Product {
   _id: string;
   title: string;
@@ -15,8 +16,16 @@ interface Product {
 }
 
 const ProductsList = () => {
+  const [search] = useSearchParams();
+  const category = search.get("category") || "";
   const { data, error, isLoading } = useData<{ products: Product[] }>(
-    "/products"
+    "/products",
+    {
+      params: {
+        category,
+      },
+    },
+    [category]
   );
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8];
   return (
