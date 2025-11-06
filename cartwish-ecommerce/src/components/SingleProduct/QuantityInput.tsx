@@ -11,7 +11,7 @@ const QuantityInput = () => {
         -{" "}
       </button>
       <p className="quantity_input_count">1</p>
-      <button className="quantity_input_button"> + </button>;
+      <button className="quantity_input_button">+</button>
     </>
   );
 };
