@@ -3,7 +3,8 @@ import ProductCard from "./ProductCard";
 import useData from "../../hooks/useData";
 import ProductCardSkeleton from "./ProductCardSkeleton";
 import { useSearchParams } from "react-router-dom";
-import Pagination from "../Common/Pagination";
+// import Pagination from "../Common/Pagination";
+import { useEffect, useState } from "react";
 interface Product {
   _id: string;
   title: string;
@@ -17,28 +18,56 @@ interface Product {
 }
 
 const ProductsList = () => {
-  const [search, setSearch] = useSearchParams();
+  const [page, setPage] = useState(1);
+  const [search] = useSearchParams();
   const category = search.get("category") || "";
-  const page = search.get("page") || "1";
   const { data, error, isLoading } = useData<{
     products: Product[];
     totalProducts: number;
+    totalPages: number;
   }>(
     "/products",
     {
       params: {
         category,
+        perPage: 12,
         page,
       },
     },
     [category, page]
   );
-  const skeletons = [1, 2, 3, 4, 5, 6, 7, 8];
-  const handlePageChange = (page: number) => {
-    const currentParams = Object.fromEntries([...search]);
+  useEffect(() => {
+    setPage(1);
+  }, [category]);
 
-    setSearch({ ...currentParams, page: String(page) });
-  };
+  const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+  // const handlePageChange = () => {
+  //   const currentParams = Object.fromEntries([...search]);
+
+  //   setSearch({
+  //     ...currentParams,
+  //     page: String((parseInt(currentParams.page) || 1) + 1),
+  //   });
+  // };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const { scrollTop, clientHeight, scrollHeight } =
+        document.documentElement;
+      if (
+        scrollTop + clientHeight >= scrollHeight - 1 &&
+        !isLoading &&
+        data &&
+        page < data.totalPages
+      ) {
+        setPage((prev) => prev + 1);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [data, isLoading, page]);
   return (
     <section className="products_list_section">
       <header className="align_center products_list_header">
@@ -53,30 +82,29 @@ const ProductsList = () => {
       </header>
       <div className="products_list">
         {error && <em className="form_error">{error}</em>}
-        {isLoading
-          ? skeletons.map((n) => <ProductCardSkeleton key={n} />)
-          : data?.products &&
-            data.products.map((product: Product) => (
-              <ProductCard
-                key={product._id}
-                id={product._id}
-                image={product.images[0]}
-                price={product.price}
-                title={product.title}
-                rating={product.reviews.rate}
-                ratingCounts={product.reviews.counts}
-                stock={product.stock}
-              />
-            ))}
+        {data?.products &&
+          data.products.map((product: Product) => (
+            <ProductCard
+              key={product._id}
+              id={product._id}
+              image={product.images[0]}
+              price={product.price}
+              title={product.title}
+              rating={product.reviews.rate}
+              ratingCounts={product.reviews.counts}
+              stock={product.stock}
+            />
+          ))}
+        {isLoading && skeletons.map((n) => <ProductCardSkeleton key={n} />)}
       </div>
-      {data && (
+      {/* {data && (
         <Pagination
           totalPosts={data?.totalProducts || 0}
           postsPerPage={8}
           onClick={handlePageChange}
           currentPage={page}
         />
-      )}
+      )} */}
     </section>
   );
 };
