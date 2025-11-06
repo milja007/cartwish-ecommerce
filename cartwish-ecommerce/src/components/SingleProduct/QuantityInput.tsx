@@ -1,17 +1,29 @@
+import { useState } from "react";
 import "./QuantityInput.css";
-// unoos only commita jer sam delal sa starim od 6 do 8 navecer zivot je tezak
-// dupla greska radio stickers za automate u canvi i delo
-//fejk sutra gas gym i druzenje priroda
-// Fejk sutra ga i uz sve do osta
+
 const QuantityInput = () => {
+  const [count, setCount] = useState(1);
   return (
     <>
-      <button className="quantity_input_button" disabled>
+      <button
+        onClick={() => {
+          setCount((prev) => prev - 1);
+        }}
+        className="quantity_input_button"
+        disabled={count === 1}
+      >
         {" "}
         -{" "}
       </button>
-      <p className="quantity_input_count">1</p>
-      <button className="quantity_input_button">+</button>
+      <p className="quantity_input_count">{count}</p>
+      <button
+        onClick={() => {
+          setCount((prev) => prev + 1);
+        }}
+        className="quantity_input_button"
+      >
+        +
+      </button>
     </>
   );
 };
