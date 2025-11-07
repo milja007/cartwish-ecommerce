@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./QuantityInput.css";
 
-const QuantityInput = () => {
+const QuantityInput = ({quantity, setQuantity ,stock}) => {
   const [count, setCount] = useState(1);
   return (
     <>
@@ -10,16 +10,18 @@ const QuantityInput = () => {
           setCount((prev) => prev - 1);
         }}
         className="quantity_input_button"
-        disabled={count === 1}
+        disabled={count <= 1}
       >
         {" "}
         -{" "}
       </button>
       <p className="quantity_input_count">{count}</p>
       <button
+      disabled={quantity>=stock}
         onClick={() => {
           setCount((prev) => prev + 1);
         }}
+
         className="quantity_input_button"
       >
         +

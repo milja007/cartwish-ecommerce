@@ -29,49 +29,47 @@ interface Product {
 // };
 const SingleProductPage = () => {
   const { id } = useParams();
-  const { data, error, isLoading } = useData<Product>(`/products/${id}`);
+  const { data: products, error, isLoading } = useData<Product>(`/products/${id}`);
   const [selectedImage, setSelectedImage] = useState(0);
-  const imageUrls = data?.images.map(
-    (img) => `http://localhost:8000/products/${img}`
-  );
+  const [quantity,setQuantity] = useState(1);
   return (
     <section className="align-center single_product">
+   {error && <em className="form_error">{error}</em>}
+   {isLoading &&<LoadingSpinner />}
+   {products && ( <>
       <div className="align-center">
         <div className="single_product_thumbnails">
-          {imageUrls?.map((image, index) => (
+          {products.images.map((image, index) => (
             <img
-              key={index}
-              src={image}
-              alt={data?.title}
-              className={selectedImage === index ? "selected_image" : ""}
-              onClick={() => setSelectedImage(index)}
+            key={index}
+            src={`http://localhost:8000/products/${image}`}
+            alt={products?.title}
+            className={selectedImage === index ? "selected_image" : ""}
+            onClick={() => setSelectedImage(index)}
             />
           ))}
         </div>
-        {error && <em className="form_error">{error}</em>}
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : (
+       
+        
           <img
-            src={imageUrls?.[selectedImage]}
-            alt={data?.title}
-            className="single_product_display"
+          src={`http://localhost:8000/products/${products.images?.[selectedImage]}`}
+          alt={products?.title}
+          className="single_product_display"
           />
-        )}
+        
       </div>
       <div className="single_product_details ">
-        {error && <em className="form_error">{error}</em>}
-        <h1 className="single_product_title">{data?.title}</h1>
-        {error && <em className="form_error">{error}</em>}
-        <p className="single_product_description">{data?.description}</p>
-        {error && <em className="form_error">{error}</em>}
-        <p className="single_product_price">${data?.price?.toFixed(2)}</p>
+        <h1 className="single_product_title">{products?.title}</h1>
+        <p className="single_product_description">{products?.description}</p>
+        <p className="single_product_price">${products?.price?.toFixed(2)}</p>
         <h2 className="quantity_title">Quantity:</h2>
         <div className="align-center quantity_input">
-          <QuantityInput />
+          <QuantityInput quantity={quantity} setQuantity={setQuantity} stock ={products.stock}/>
         </div>
         <button className="search_button add_cart">Add to Cart</button>
       </div>
+        </>)
+      }
     </section>
   );
 };
