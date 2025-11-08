@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./QuantityInput.css";
-
+// rodendan jbg nemam vremena gulas i planinarenje
 const QuantityInput = ({quantity, setQuantity ,stock}) => {
   const [count, setCount] = useState(1);
   return (
