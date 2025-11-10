@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./QuantityInput.css";
-// rodendan jbg nemam vremena gulas i planinarenje
-// nikin tata rucak gabrek,repete gulasa,druzenje sa starcima i dorom i njenim deckom
+// Zagreb intid doo fiskalizacija za aparate i ostali poslovi evo doma 22:35 vrijeme za spavanac sutra jako ili nikako
 const QuantityInput = ({quantity, setQuantity ,stock}) => {
   const [count, setCount] = useState(1);
   return (
