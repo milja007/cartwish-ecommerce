@@ -1,28 +1,30 @@
-import { useState } from "react";
 import "./QuantityInput.css";
-// Zagreb intid doo fiskalizacija za aparate i ostali poslovi evo doma 22:35 vrijeme za spavanac sutra jako ili nikako
-// obavljao sastanke i ponude za hugos loyalty progr i realestate i trening zakazao opet sutra cijeli dan na kompu 
-const QuantityInput = ({quantity, setQuantity ,stock}) => {
-  const [count, setCount] = useState(1);
+
+interface QuantityInputProps {
+  quantity: number;
+  setQuantity: (value: number | ((prev: number) => number)) => void;
+  stock: number;
+}
+
+const QuantityInput = ({ quantity, setQuantity, stock }: QuantityInputProps) => {
   return (
     <>
       <button
         onClick={() => {
-          setCount((prev) => prev - 1);
+          setQuantity((prev) => prev - 1);
         }}
         className="quantity_input_button"
-        disabled={count <= 1}
+        disabled={quantity <= 1}
       >
         {" "}
         -{" "}
       </button>
-      <p className="quantity_input_count">{count}</p>
+      <p className="quantity_input_count">{quantity}</p>
       <button
-      disabled={quantity>=stock}
+        disabled={quantity >= stock}
         onClick={() => {
-          setCount((prev) => prev + 1);
+          setQuantity((prev) => prev + 1);
         }}
-
         className="quantity_input_button"
       >
         +
