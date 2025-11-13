@@ -1,10 +1,11 @@
 import "./SignupPage.css";
 import user from "../../assets/user.webp";
 import "./LoginPage.css";
-import { useForm, type FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import {signup} from "../../services/userServices"
 
 const schema = z
   .object({
@@ -30,8 +31,15 @@ const SignupPage = () => {
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
-  const onSubmit = (formData: FieldValues) => console.log(formData);
-  console.log(profilePic);
+  const onSubmit = async(formData: z.infer<typeof schema>) => {
+    if (!profilePic) return;
+    await signup({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      deliveryAddress: formData.deliveryAddress,
+    }, profilePic);
+  }
   return (
     <section className="align-center form_page">
       <form
