@@ -7,14 +7,24 @@ interface User {
     deliveryAddress: string;
 }
 
-export function signup(user: User, profile: File) {
+interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+export function signup(user: User, profile: File | null) {
     const body = new FormData()
     body.append("name" , user.name)
     body.append("email" , user.email)
     body.append("password" , user.password)
     body.append("deliveryAddress" , user.deliveryAddress)
-    body.append("profilePic" , profile)
-
+    if (profile) {
+        body.append("profilePic" , profile)
+    }
 
    return apiClient.post("/user/signup" , body)
+}
+
+export function login(credentials: LoginCredentials){
+    return apiClient.post("/user/login" , credentials)
 }

@@ -1,7 +1,11 @@
 import "./LoginPage.css";
-import { useForm, type FieldValues } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {login} from "../../services/userServices";
+import { AxiosError } from "axios";
+import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 
 const schema = z.object({
   email: z
@@ -10,14 +14,29 @@ const schema = z.object({
     .min(3, "Email adress must be at least 3 characters"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
+
+type LoginFormData = z.infer<typeof schema>;
+
 const LoginPage = () => {
+  const navigate = useNavigate();
+  const [formError, setFormError] = useState("")
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ resolver: zodResolver(schema) });
+  } = useForm<LoginFormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = (formData: FieldValues) => console.log(formData);
+  const onSubmit = async (formData: LoginFormData) => {
+    try {
+     const {data} = await login(formData);
+     localStorage.setItem("token", data.token)
+     navigate("/")
+    } catch (err) {
+      if (err instanceof AxiosError && err.response?.status === 400) {
+        setFormError(err.response.data.message);
+      }
+    }
+  };
 
   return (
     <section className="align-center form_page">
@@ -50,6 +69,7 @@ const LoginPage = () => {
               <em className="form_error">{errors.password.message}</em>
             )}
           </div>
+          {formError && <em className="form_error">{formError}</em>}
           <button className="search_button form_submit" type="submit">
             Submit
           </button>

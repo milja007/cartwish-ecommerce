@@ -5,7 +5,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import {signup} from "../../services/userServices"
+import { signup } from "../../services/userServices";
+import { AxiosError } from "axios";
+import {useNavigate} from "react-router-dom";
 
 const schema = z
   .object({
@@ -25,6 +27,8 @@ const schema = z
 
 const SignupPage = () => {
   const [profilePic, setprofilePic] = useState<File | null>(null);
+  const [formError, setFormError] = useState("")
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -32,13 +36,20 @@ const SignupPage = () => {
   } = useForm({ resolver: zodResolver(schema) });
 
   const onSubmit = async(formData: z.infer<typeof schema>) => {
-    if (!profilePic) return;
-    await signup({
-      name: formData.name,
-      email: formData.email,
-      password: formData.password,
-      deliveryAddress: formData.deliveryAddress,
-    }, profilePic);
+    try {
+     const {data} = await signup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        deliveryAddress: formData.deliveryAddress,
+      }, profilePic);
+      localStorage.setItem("token", data.token)
+       navigate("/") 
+    } catch (err) {
+      if (err instanceof AxiosError && err.response?.status === 400) {
+        setFormError(err.response.data.message);
+      }
+    }
   }
   return (
     <section className="align-center form_page">
@@ -138,7 +149,7 @@ const SignupPage = () => {
             )}
           </div>
         </div>
-
+        {formError&& <em className="form_error">{formError}</em>}
         <button className="search_button form_submit" type="submit">
           Submit
         </button>
