@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {login} from "../../services/userServices";
 import { AxiosError } from "axios";
 import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+
 
 const schema = z.object({
   email: z
@@ -18,7 +18,7 @@ const schema = z.object({
 type LoginFormData = z.infer<typeof schema>;
 
 const LoginPage = () => {
-  const navigate = useNavigate();
+
   const [formError, setFormError] = useState("")
   const {
     register,
@@ -30,7 +30,7 @@ const LoginPage = () => {
     try {
      const {data} = await login(formData);
      localStorage.setItem("token", data.token)
-     navigate("/")
+     window.location.href = "/";
     } catch (err) {
       if (err instanceof AxiosError && err.response?.status === 400) {
         setFormError(err.response.data.message);

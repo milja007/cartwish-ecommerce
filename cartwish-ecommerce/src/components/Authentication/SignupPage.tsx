@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { signup } from "../../services/userServices";
 import { AxiosError } from "axios";
-import {useNavigate} from "react-router-dom";
+
 
 const schema = z
   .object({
@@ -28,7 +28,6 @@ const schema = z
 const SignupPage = () => {
   const [profilePic, setprofilePic] = useState<File | null>(null);
   const [formError, setFormError] = useState("")
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -44,7 +43,7 @@ const SignupPage = () => {
         deliveryAddress: formData.deliveryAddress,
       }, profilePic);
       localStorage.setItem("token", data.token)
-       navigate("/") 
+       window.location.href="/" 
     } catch (err) {
       if (err instanceof AxiosError && err.response?.status === 400) {
         setFormError(err.response.data.message);

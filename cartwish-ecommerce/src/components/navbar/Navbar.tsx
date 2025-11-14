@@ -7,7 +7,17 @@ import order from "../../assets/basket.png";
 import lock from "../../assets/locked.png";
 import LinkWithIcon from "./LinkWithIcon";
 import { NavLink } from "react-router-dom";
-const Navbar = () => {
+
+interface JwtPayload {
+  exp: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
+
+interface NavbarProps {
+  user: JwtPayload | null;
+}
+const Navbar = ({user}: NavbarProps) => {
   return (
     <nav className="navbar align-center">
       <div className="align-center">
@@ -31,33 +41,40 @@ const Navbar = () => {
           emoji={star}
           sidebar={false}
         />
+      { !user && <>
         <LinkWithIcon
           title="Login"
           link="/login"
           emoji={idButton}
           sidebar={false}
-        />
+          />
         <LinkWithIcon
           title="SignUp"
           link="/signup"
           emoji={memo}
           sidebar={false}
-        />
-        <LinkWithIcon
+          />
+          </>
+          }
+       {user && 
+       <>
+       <LinkWithIcon
           title="My Orders"
           link="/orders"
           emoji={order}
           sidebar={false}
-        />
+          />
         <LinkWithIcon
           title="Logout"
           link="/logout"
           emoji={lock}
           sidebar={false}
-        />
+          />
         <NavLink to="/cart" className="align-center">
           Cart <p className="align-center cart_counts">0</p>
         </NavLink>
+          </>
+        }
       </div>
     </nav>
   );
