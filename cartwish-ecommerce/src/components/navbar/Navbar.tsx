@@ -16,8 +16,9 @@ interface JwtPayload {
 
 interface NavbarProps {
   user: JwtPayload | null;
+  cartCount: number;
 }
-const Navbar = ({user}: NavbarProps) => {
+const Navbar = ({ user, cartCount }: NavbarProps) => {
   return (
     <nav className="navbar align-center">
       <div className="align-center">
@@ -41,40 +42,41 @@ const Navbar = ({user}: NavbarProps) => {
           emoji={star}
           sidebar={false}
         />
-      { !user && <>
-        <LinkWithIcon
-          title="Login"
-          link="/login"
-          emoji={idButton}
-          sidebar={false}
-          />
-        <LinkWithIcon
-          title="SignUp"
-          link="/signup"
-          emoji={memo}
-          sidebar={false}
-          />
+        {!user && (
+          <>
+            <LinkWithIcon
+              title="Login"
+              link="/login"
+              emoji={idButton}
+              sidebar={false}
+            />
+            <LinkWithIcon
+              title="SignUp"
+              link="/signup"
+              emoji={memo}
+              sidebar={false}
+            />
           </>
-          }
-       {user && 
-       <>
-       <LinkWithIcon
-          title="My Orders"
-          link="/orders"
-          emoji={order}
-          sidebar={false}
-          />
-        <LinkWithIcon
-          title="Logout"
-          link="/logout"
-          emoji={lock}
-          sidebar={false}
-          />
-        <NavLink to="/cart" className="align-center">
-          Cart <p className="align-center cart_counts">0</p>
-        </NavLink>
+        )}
+        {user && (
+          <>
+            <LinkWithIcon
+              title="My Orders"
+              link="/orders"
+              emoji={order}
+              sidebar={false}
+            />
+            <LinkWithIcon
+              title="Logout"
+              link="/logout"
+              emoji={lock}
+              sidebar={false}
+            />
+            <NavLink to="/cart" className="align-center">
+              Cart <p className="align-center cart_counts">{cartCount}</p>
+            </NavLink>
           </>
-        }
+        )}
       </div>
     </nav>
   );

@@ -18,6 +18,11 @@ interface Product {
   stock: number;
 }
 
+interface SingleProductPageProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addToCart: (product: any, quantity: number) => void;
+}
+
 // const product = {
 //   id: 1,
 //   title: "Product Title",
@@ -27,49 +32,66 @@ interface Product {
 //   images: [iphoneImage, iphoneProImage, macImage, userImage],
 //   stock: 10,
 // };
-const SingleProductPage = () => {
+
+const SingleProductPage = ({ addToCart }: SingleProductPageProps) => {
   const { id } = useParams();
-  const { data: products, error, isLoading } = useData<Product>(`/products/${id}`);
+  const {
+    data: products,
+    error,
+    isLoading,
+  } = useData<Product>(`/products/${id}`);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity,setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(1);
   return (
     <section className="align-center single_product">
-   {error && <em className="form_error">{error}</em>}
-   {isLoading &&<LoadingSpinner />}
-   {products && ( <>
-      <div className="align-center">
-        <div className="single_product_thumbnails">
-          {products.images.map((image, index) => (
+      {error && <em className="form_error">{error}</em>}
+      {isLoading && <LoadingSpinner />}
+      {products && (
+        <>
+          <div className="align-center">
+            <div className="single_product_thumbnails">
+              {products.images.map((image, index) => (
+                <img
+                  key={index}
+                  src={`http://localhost:8000/products/${image}`}
+                  alt={products?.title}
+                  className={selectedImage === index ? "selected_image" : ""}
+                  onClick={() => setSelectedImage(index)}
+                />
+              ))}
+            </div>
+
             <img
-            key={index}
-            src={`http://localhost:8000/products/${image}`}
-            alt={products?.title}
-            className={selectedImage === index ? "selected_image" : ""}
-            onClick={() => setSelectedImage(index)}
+              src={`http://localhost:8000/products/${products.images?.[selectedImage]}`}
+              alt={products?.title}
+              className="single_product_display"
             />
-          ))}
-        </div>
-       
-        
-          <img
-          src={`http://localhost:8000/products/${products.images?.[selectedImage]}`}
-          alt={products?.title}
-          className="single_product_display"
-          />
-        
-      </div>
-      <div className="single_product_details ">
-        <h1 className="single_product_title">{products?.title}</h1>
-        <p className="single_product_description">{products?.description}</p>
-        <p className="single_product_price">${products?.price?.toFixed(2)}</p>
-        <h2 className="quantity_title">Quantity:</h2>
-        <div className="align-center quantity_input">
-          <QuantityInput quantity={quantity} setQuantity={setQuantity} stock ={products.stock}/>
-        </div>
-        <button className="search_button add_cart">Add to Cart</button>
-      </div>
-        </>)
-      }
+          </div>
+          <div className="single_product_details ">
+            <h1 className="single_product_title">{products?.title}</h1>
+            <p className="single_product_description">
+              {products?.description}
+            </p>
+            <p className="single_product_price">
+              ${products?.price?.toFixed(2)}
+            </p>
+            <h2 className="quantity_title">Quantity:</h2>
+            <div className="align-center quantity_input">
+              <QuantityInput
+                quantity={quantity}
+                setQuantity={setQuantity}
+                stock={products.stock}
+              />
+            </div>
+            <button
+              className="search_button add_cart"
+              onClick={() => addToCart(products, quantity)}
+            >
+              Add to Cart
+            </button>
+          </div>
+        </>
+      )}
     </section>
   );
 };

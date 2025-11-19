@@ -8,12 +8,20 @@ import LoginPage from "../Authentication/LoginPage";
 import SignupPage from "../Authentication/SignupPage";
 import LogoutPage from "../Authentication/LogoutPage";
 
-const Routing = () => {
+interface RoutingProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  addToCart: (product: any, quantity: number) => void;
+}
+
+const Routing = ({ addToCart }: RoutingProps) => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/products" element={<ProductsPage />} />
-      <Route path="/product/:id" element={<SingleProductPage />} />
+      <Route
+        path="/product/:id"
+        element={<SingleProductPage addToCart={addToCart} />}
+      />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/orders" element={<MyOrderPage />} />
       <Route path="/login" element={<LoginPage />} />

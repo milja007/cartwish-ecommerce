@@ -9,8 +9,15 @@ interface JwtPayload {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
+interface CartItem {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  product: any;
+  quantity: number;
+}
+
 const App = () => {
   const [user, setUser] = useState<JwtPayload | null>(null);
+  const [cart, setCart] = useState<CartItem[]>([]);
   useEffect(() => {
     try {
       {
@@ -31,11 +38,26 @@ const App = () => {
       // Prešutno ignoriši greške ako token ne postoji ili je nevažeći
     }
   }, []);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const addToCart = (product: any, quantity: number) => {
+    const updatedCart = [...cart];
+    const productIndex = updatedCart.findIndex(
+      (item) => item.product._id === product._id
+    );
+    if (productIndex === -1) {
+      updatedCart.push({ product, quantity });
+    }
+    if (productIndex !== -1) {
+      updatedCart[productIndex].quantity += quantity;
+    }
+    setCart(updatedCart);
+  };
   return (
     <div className="app">
-      <Navbar user={user} />
+      <Navbar user={user} cartCount={cart.length} />
       <main>
-        <Routing />
+        <Routing addToCart={addToCart} />
       </main>
     </div>
   );
