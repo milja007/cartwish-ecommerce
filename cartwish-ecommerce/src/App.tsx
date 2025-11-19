@@ -4,6 +4,9 @@ import Routing from "./components/Routing/Routing";
 import { useState, useEffect } from "react";
 import { getJwt, getUser } from "./services/userServices";
 import setAuthToken from "./utils/setAuthToken";
+import { addToCartAPI } from "./services/cartSevices";
+import { ToastContainer, toast } from "react-toastify/unstyled";
+import "react-toastify/dist/ReactToastify.css";
 
 interface JwtPayload {
   exp: number;
@@ -53,11 +56,20 @@ const App = () => {
       updatedCart[productIndex].quantity += quantity;
     }
     setCart(updatedCart);
+    addToCartAPI(product._id, quantity)
+      .then(() => {
+        toast.success("Product Added Succesfully");
+      })
+      .catch(() => {
+        toast.error("Failed to Add Product");
+        setCart(cart);
+      });
   };
   return (
     <div className="app">
       <Navbar user={user} cartCount={cart.length} />
       <main>
+        <ToastContainer position="bottom-right" />
         <Routing addToCart={addToCart} />
       </main>
     </div>
