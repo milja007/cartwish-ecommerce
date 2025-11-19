@@ -8,12 +8,19 @@ import LoginPage from "../Authentication/LoginPage";
 import SignupPage from "../Authentication/SignupPage";
 import LogoutPage from "../Authentication/LogoutPage";
 
+interface CartItem {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  product: any;
+  quantity: number;
+}
+
 interface RoutingProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addToCart: (product: any, quantity: number) => void;
+  cart: CartItem[];
 }
 
-const Routing = ({ addToCart }: RoutingProps) => {
+const Routing = ({ addToCart, cart }: RoutingProps) => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
@@ -22,7 +29,7 @@ const Routing = ({ addToCart }: RoutingProps) => {
         path="/product/:id"
         element={<SingleProductPage addToCart={addToCart} />}
       />
-      <Route path="/cart" element={<CartPage />} />
+      <Route path="/cart" element={<CartPage cart={cart} />} />
       <Route path="/orders" element={<MyOrderPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
