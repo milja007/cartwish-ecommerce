@@ -2,10 +2,9 @@ import "./LoginPage.css";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {login} from "../../services/userServices";
+import { login } from "../../services/userServices";
 import { AxiosError } from "axios";
-import {useState} from "react";
-
+import { useState } from "react";
 
 const schema = z.object({
   email: z
@@ -18,8 +17,7 @@ const schema = z.object({
 type LoginFormData = z.infer<typeof schema>;
 
 const LoginPage = () => {
-
-  const [formError, setFormError] = useState("")
+  const [formError, setFormError] = useState("");
   const {
     register,
     handleSubmit,
@@ -28,9 +26,8 @@ const LoginPage = () => {
 
   const onSubmit = async (formData: LoginFormData) => {
     try {
-     const {data} = await login(formData);
-     localStorage.setItem("token", data.token)
-     window.location.href = "/";
+      await login(formData);
+      window.location.href = "/";
     } catch (err) {
       if (err instanceof AxiosError && err.response?.status === 400) {
         setFormError(err.response.data.message);

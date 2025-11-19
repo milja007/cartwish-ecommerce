@@ -8,7 +8,6 @@ import { useState } from "react";
 import { signup } from "../../services/userServices";
 import { AxiosError } from "axios";
 
-
 const schema = z
   .object({
     name: z.string().min(3, "Name should be at least 3 characters."),
@@ -27,29 +26,31 @@ const schema = z
 
 const SignupPage = () => {
   const [profilePic, setprofilePic] = useState<File | null>(null);
-  const [formError, setFormError] = useState("")
+  const [formError, setFormError] = useState("");
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ resolver: zodResolver(schema) });
 
-  const onSubmit = async(formData: z.infer<typeof schema>) => {
+  const onSubmit = async (formData: z.infer<typeof schema>) => {
     try {
-     const {data} = await signup({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        deliveryAddress: formData.deliveryAddress,
-      }, profilePic);
-      localStorage.setItem("token", data.token)
-       window.location.href="/" 
+      await signup(
+        {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          deliveryAddress: formData.deliveryAddress,
+        },
+        profilePic
+      );
+      window.location.href = "/";
     } catch (err) {
       if (err instanceof AxiosError && err.response?.status === 400) {
         setFormError(err.response.data.message);
       }
     }
-  }
+  };
   return (
     <section className="align-center form_page">
       <form
@@ -148,7 +149,7 @@ const SignupPage = () => {
             )}
           </div>
         </div>
-        {formError&& <em className="form_error">{formError}</em>}
+        {formError && <em className="form_error">{formError}</em>}
         <button className="search_button form_submit" type="submit">
           Submit
         </button>
