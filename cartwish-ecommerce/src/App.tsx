@@ -2,7 +2,8 @@ import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import Routing from "./components/Routing/Routing";
 import { useState, useEffect } from "react";
-import { getUser } from "./services/userServices";
+import { getJwt, getUser } from "./services/userServices";
+import setAuthToken from "./utils/setAuthToken";
 
 interface JwtPayload {
   exp: number;
@@ -14,7 +15,7 @@ interface CartItem {
   product: any;
   quantity: number;
 }
-
+setAuthToken(getJwt());
 const App = () => {
   const [user, setUser] = useState<JwtPayload | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);

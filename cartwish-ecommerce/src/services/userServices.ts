@@ -47,3 +47,7 @@ export function getUser() {
     if (err) return null;
   }
 }
+
+export function getJwt() {
+  return localStorage.getItem(tokenName);
+}
