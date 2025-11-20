@@ -7,3 +7,7 @@ export function addToCartAPI(id: string, quantity: number) {
 export function getCartAPI() {
   return apiClient.get("/cart");
 }
+
+export function removeFromCartAPI(id: number | string) {
+  return apiClient.patch(`/cart/remove/${id}`);
+}

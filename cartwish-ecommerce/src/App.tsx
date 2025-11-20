@@ -5,7 +5,11 @@ import Routing from "./components/Routing/Routing";
 import { useState, useEffect } from "react";
 import { getJwt, getUser } from "./services/userServices";
 import setAuthToken from "./utils/setAuthToken";
-import { addToCartAPI, getCartAPI } from "./services/cartSevices";
+import {
+  addToCartAPI,
+  getCartAPI,
+  removeFromCartAPI,
+} from "./services/cartSevices";
 import { ToastContainer, toast } from "react-toastify/unstyled";
 import "react-toastify/dist/ReactToastify.css";
 import cartContext from "./contexts/CartContext";
@@ -67,6 +71,15 @@ const App = () => {
         setCart(cart);
       });
   };
+  const removeFromCart = (id: string | number) => {
+    const oldCart = [...cart];
+    const newCart = oldCart.filter((item) => item.product._id !== id);
+    setCart(newCart);
+    removeFromCartAPI(id).catch(() => {
+      toast.error("Something went wrong");
+      setCart(oldCart);
+    });
+  };
   const getCart = () => {
     getCartAPI()
       .then((res) => {
@@ -82,7 +95,7 @@ const App = () => {
 
   return (
     <UserContext.Provider value={user}>
-      <cartContext.Provider value={{ addToCart, cart }}>
+      <cartContext.Provider value={{ addToCart, cart, removeFromCart }}>
         <div className="app">
           <Navbar />
           <main>

@@ -10,6 +10,7 @@ interface CartContextType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addToCart: (product: any, quantity: number) => void;
   cart: CartItem[];
+  removeFromCart: (id: string | number) => void;
 }
 
 const cartContext = createContext<CartContextType | null>(null);
