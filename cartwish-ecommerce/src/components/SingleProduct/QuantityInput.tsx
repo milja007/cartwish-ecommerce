@@ -1,17 +1,45 @@
 import "./QuantityInput.css";
 
-interface QuantityInputProps {
-  quantity: number;
-  setQuantity: (value: number | ((prev: number) => number)) => void;
-  stock: number;
-}
+type QuantityInputProps =
+  | {
+      quantity: number;
+      setQuantity: (quantity: number) => void;
+      stock: number;
+      cartPage?: false;
+      productId?: never;
+    }
+  | {
+      quantity: number;
+      setQuantity: (
+        type: "increase" | "decrease",
+        productId: string | number
+      ) => void;
+      stock: number;
+      cartPage: true;
+      productId: string | number;
+    };
 
-const QuantityInput = ({ quantity, setQuantity, stock }: QuantityInputProps) => {
+const QuantityInput = ({
+  quantity,
+  setQuantity,
+  stock,
+  cartPage,
+  productId,
+}: QuantityInputProps) => {
   return (
     <>
       <button
         onClick={() => {
-          setQuantity((prev) => prev - 1);
+          if (cartPage) {
+            (
+              setQuantity as (
+                type: "increase" | "decrease",
+                productId: string | number
+              ) => void
+            )("decrease", productId!);
+          } else {
+            (setQuantity as (quantity: number) => void)(quantity - 1);
+          }
         }}
         className="quantity_input_button"
         disabled={quantity <= 1}
@@ -23,7 +51,16 @@ const QuantityInput = ({ quantity, setQuantity, stock }: QuantityInputProps) => 
       <button
         disabled={quantity >= stock}
         onClick={() => {
-          setQuantity((prev) => prev + 1);
+          if (cartPage) {
+            (
+              setQuantity as (
+                type: "increase" | "decrease",
+                productId: string | number
+              ) => void
+            )("increase", productId!);
+          } else {
+            (setQuantity as (quantity: number) => void)(quantity + 1);
+          }
         }}
         className="quantity_input_button"
       >

@@ -24,6 +24,7 @@ const CartPage = () => {
   const cartContextValue = useContext(cartContext);
   const removeFromCart = cartContextValue?.removeFromCart;
   const cart = cartContextValue?.cart;
+  const updateCart = cartContextValue?.updateCart;
   useEffect(() => {
     let total = 0;
     cart?.forEach((item: CartItem) => {
@@ -51,7 +52,15 @@ const CartPage = () => {
               <td>{product.title}</td>
               <td>${product.price}</td>
               <td className="align-center table_quantity_input">
-                <QuantityInput quantity={quantity} stock={product.stock} />
+                <QuantityInput
+                  quantity={quantity}
+                  stock={product.stock}
+                  setQuantity={(type, productId) => {
+                    updateCart?.(productId, type);
+                  }}
+                  cartPage={true}
+                  productId={product._id}
+                />
               </td>
               <td>${quantity * product.price}</td>
               <td>

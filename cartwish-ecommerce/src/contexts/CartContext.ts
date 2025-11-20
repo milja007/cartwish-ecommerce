@@ -11,6 +11,7 @@ interface CartContextType {
   addToCart: (product: any, quantity: number) => void;
   cart: CartItem[];
   removeFromCart: (id: string | number) => void;
+  updateCart: (id: string | number, type: "increase" | "decrease") => void;
 }
 
 const cartContext = createContext<CartContextType | null>(null);
