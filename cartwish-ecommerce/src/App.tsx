@@ -8,6 +8,7 @@ import setAuthToken from "./utils/setAuthToken";
 import { addToCartAPI, getCartAPI } from "./services/cartSevices";
 import { ToastContainer, toast } from "react-toastify/unstyled";
 import "react-toastify/dist/ReactToastify.css";
+import cartContext from "./contexts/CartContext";
 
 interface JwtPayload {
   exp: number;
@@ -81,13 +82,15 @@ const App = () => {
 
   return (
     <UserContext.Provider value={user}>
-      <div className="app">
-        <Navbar cartCount={cart.length} />
-        <main>
-          <ToastContainer position="bottom-right" />
-          <Routing addToCart={addToCart} cart={cart} />
-        </main>
-      </div>
+      <cartContext.Provider value={{ addToCart, cart }}>
+        <div className="app">
+          <Navbar />
+          <main>
+            <ToastContainer position="bottom-right" />
+            <Routing />
+          </main>
+        </div>
+      </cartContext.Provider>
     </UserContext.Provider>
   );
 };

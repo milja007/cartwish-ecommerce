@@ -8,7 +8,8 @@ import QuantityInput from "./QuantityInput";
 import useData from "../../hooks/useData";
 import { useParams } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
-
+import cartContext from "../../contexts/CartContext";
+import { useContext } from "react";
 interface Product {
   _id: string;
   title: string;
@@ -16,11 +17,6 @@ interface Product {
   price: number;
   images: string[];
   stock: number;
-}
-
-interface SingleProductPageProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  addToCart: (product: any, quantity: number) => void;
 }
 
 // const product = {
@@ -33,7 +29,9 @@ interface SingleProductPageProps {
 //   stock: 10,
 // };
 
-const SingleProductPage = ({ addToCart }: SingleProductPageProps) => {
+const SingleProductPage = () => {
+  const cartContextValue = useContext(cartContext);
+  const addToCart = cartContextValue?.addToCart;
   const { id } = useParams();
   const {
     data: products,
@@ -85,7 +83,7 @@ const SingleProductPage = ({ addToCart }: SingleProductPageProps) => {
             </div>
             <button
               className="search_button add_cart"
-              onClick={() => addToCart(products, quantity)}
+              onClick={() => addToCart?.(products, quantity)}
             >
               Add to Cart
             </button>

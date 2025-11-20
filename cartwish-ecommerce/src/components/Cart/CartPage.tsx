@@ -1,27 +1,31 @@
 import "./CartPage.css";
+import cartContext from "../../contexts/CartContext";
 import UserContext from "../../contexts/UserContext";
 import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
 import { useState, useEffect, useContext } from "react";
 
-interface CartItem {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  product: any;
+type CartProduct = {
+  _id: string;
+  title: string;
+  price: number;
+  stock: number;
+};
+
+type CartItem = {
+  product: CartProduct;
   quantity: number;
-}
+};
 
-interface CartProps {
-  cart: CartItem[];
-}
-
-const CartPage = ({ cart }: CartProps) => {
+const CartPage = () => {
   const [subtotal, setSubtotal] = useState(0);
   const user = useContext(UserContext);
-  console.log(user);
+  const cartContextValue = useContext(cartContext);
+  const cart = cartContextValue?.cart;
   useEffect(() => {
     let total = 0;
-    cart.forEach((item) => {
+    cart?.forEach((item: CartItem) => {
       total += item.product.price * item.quantity;
     });
     setSubtotal(total);
@@ -41,7 +45,7 @@ const CartPage = ({ cart }: CartProps) => {
       {/* cart table */}
       <Table headings={["Item", "Price", "Quantity", "Total", "Remove"]}>
         <tbody>
-          {cart.map(({ product, quantity }) => (
+          {(cart ?? []).map(({ product, quantity }: CartItem) => (
             <tr key={product._id}>
               <td>{product.title}</td>
               <td>${product.price}</td>

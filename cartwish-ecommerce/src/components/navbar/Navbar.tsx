@@ -9,12 +9,11 @@ import LinkWithIcon from "./LinkWithIcon";
 import { NavLink } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
-
-interface NavbarProps {
-  cartCount: number;
-}
-const Navbar = ({ cartCount }: NavbarProps) => {
+import cartContext from "../../contexts/CartContext";
+const Navbar = () => {
   const user = useContext(UserContext);
+  const cartValue = useContext(cartContext);
+  const cart = cartValue?.cart;
   return (
     <nav className="navbar align-center">
       <div className="align-center">
@@ -69,7 +68,7 @@ const Navbar = ({ cartCount }: NavbarProps) => {
               sidebar={false}
             />
             <NavLink to="/cart" className="align-center">
-              Cart <p className="align-center cart_counts">{cartCount}</p>
+              Cart <p className="align-center cart_counts">{cart?.length}</p>
             </NavLink>
           </>
         )}
