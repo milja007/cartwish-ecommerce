@@ -1,9 +1,9 @@
 import "./CartPage.css";
-import user from "../../assets/user.webp";
+import UserContext from "../../contexts/UserContext";
 import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 interface CartItem {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,6 +17,8 @@ interface CartProps {
 
 const CartPage = ({ cart }: CartProps) => {
   const [subtotal, setSubtotal] = useState(0);
+  const user = useContext(UserContext);
+  console.log(user);
   useEffect(() => {
     let total = 0;
     cart.forEach((item) => {
@@ -27,10 +29,13 @@ const CartPage = ({ cart }: CartProps) => {
   return (
     <section className="align-center cart_page">
       <div className="align-center user_info">
-        <img src={user} alt="user profile" />
+        <img
+          src={`http://localhost:8000/profile/${user?.profilePic}`}
+          alt="user profile"
+        />
         <div>
-          <p className="user_name">Harley</p>
-          <p className="user_email">harley@gmail.com</p>
+          <p className="user_name">Name:{user?.name}</p>
+          <p className="user_email">Email:{user?.email}</p>
         </div>
       </div>
       {/* cart table */}

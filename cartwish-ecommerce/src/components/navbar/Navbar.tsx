@@ -7,18 +7,14 @@ import order from "../../assets/basket.png";
 import lock from "../../assets/locked.png";
 import LinkWithIcon from "./LinkWithIcon";
 import { NavLink } from "react-router-dom";
-
-interface JwtPayload {
-  exp: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
-}
+import UserContext from "../../contexts/UserContext";
+import { useContext } from "react";
 
 interface NavbarProps {
-  user: JwtPayload | null;
   cartCount: number;
 }
-const Navbar = ({ user, cartCount }: NavbarProps) => {
+const Navbar = ({ cartCount }: NavbarProps) => {
+  const user = useContext(UserContext);
   return (
     <nav className="navbar align-center">
       <div className="align-center">
