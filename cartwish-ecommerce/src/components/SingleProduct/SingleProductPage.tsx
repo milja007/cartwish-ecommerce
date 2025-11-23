@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import LoadingSpinner from "./LoadingSpinner";
 import cartContext from "../../contexts/CartContext";
 import { useContext } from "react";
+import UserContext from "../../contexts/UserContext";
 interface Product {
   _id: string;
   title: string;
@@ -32,6 +33,8 @@ interface Product {
 const SingleProductPage = () => {
   const cartContextValue = useContext(cartContext);
   const addToCart = cartContextValue?.addToCart;
+  const userContextValue = useContext(UserContext);
+  const user = userContextValue?.user;
   const { id } = useParams();
   const {
     data: products,
@@ -73,20 +76,24 @@ const SingleProductPage = () => {
             <p className="single_product_price">
               ${products?.price?.toFixed(2)}
             </p>
-            <h2 className="quantity_title">Quantity:</h2>
-            <div className="align-center quantity_input">
-              <QuantityInput
-                quantity={quantity}
-                setQuantity={setQuantity}
-                stock={products.stock}
-              />
-            </div>
-            <button
-              className="search_button add_cart"
-              onClick={() => addToCart?.(products, quantity)}
-            >
-              Add to Cart
-            </button>
+            {user && (
+              <>
+                <h2 className="quantity_title">Quantity:</h2>
+                <div className="align-center quantity_input">
+                  <QuantityInput
+                    quantity={quantity}
+                    setQuantity={setQuantity}
+                    stock={products.stock}
+                  />
+                </div>
+                <button
+                  className="search_button add_cart"
+                  onClick={() => addToCart?.(products, quantity)}
+                >
+                  Add to Cart
+                </button>
+              </>
+            )}
           </div>
         </>
       )}
