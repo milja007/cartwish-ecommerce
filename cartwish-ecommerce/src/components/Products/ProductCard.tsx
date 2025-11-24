@@ -23,8 +23,7 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const cartContextValue = useContext(cartContext);
   const addToCart = cartContextValue?.addToCart;
-  const userContextValue = useContext(UserContext);
-  const user = userContextValue?.user;
+  const user = useContext(UserContext);
   return (
     <article className="product_card">
       <div className="product_image">

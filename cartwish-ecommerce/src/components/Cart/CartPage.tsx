@@ -5,6 +5,8 @@ import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
 import { useState, useEffect, useContext } from "react";
+import { checkoutAPI } from "../../services/orderServices";
+import { toast } from "react-toastify";
 
 type CartProduct = {
   _id: string;
@@ -25,6 +27,7 @@ const CartPage = () => {
   const removeFromCart = cartContextValue?.removeFromCart;
   const cart = cartContextValue?.cart;
   const updateCart = cartContextValue?.updateCart;
+  const setCart = cartContextValue?.setCart;
   useEffect(() => {
     let total = 0;
     cart?.forEach((item: CartItem) => {
@@ -32,6 +35,19 @@ const CartPage = () => {
     });
     setSubtotal(total);
   }, [cart]);
+
+  const checkout = () => {
+    const oldCart = [...(cart ?? [])];
+    setCart?.([]);
+    checkoutAPI()
+      .then(() => {
+        toast.success("Order Placed Successfully!");
+      })
+      .catch(() => {
+        toast.error("Something went wrong!");
+        setCart?.(oldCart);
+      });
+  };
   return (
     <section className="align-center cart_page">
       <div className="align-center user_info">
@@ -92,7 +108,9 @@ const CartPage = () => {
           </tr>
         </tbody>
       </table>
-      <button className="search_button checkout_button">Checkout</button>
+      <button className="search_button checkout_button" onClick={checkout}>
+        Checkout
+      </button>
     </section>
   );
 };

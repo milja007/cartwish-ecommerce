@@ -33,8 +33,7 @@ interface Product {
 const SingleProductPage = () => {
   const cartContextValue = useContext(cartContext);
   const addToCart = cartContextValue?.addToCart;
-  const userContextValue = useContext(UserContext);
-  const user = userContextValue?.user;
+  const user = useContext(UserContext);
   const { id } = useParams();
   const {
     data: products,
