@@ -21,6 +21,7 @@ const ProductsList = () => {
   const [page, setPage] = useState(1);
   const [search] = useSearchParams();
   const category = search.get("category") || "";
+  const searchQuery = search.get("search");
   const { data, error, isLoading } = useData<{
     products: Product[];
     totalProducts: number;
@@ -29,16 +30,17 @@ const ProductsList = () => {
     "/products",
     {
       params: {
+        search: searchQuery || "",
         category,
         perPage: 12,
         page,
       },
     },
-    [category, page]
+    [category, page, searchQuery]
   );
   useEffect(() => {
     setPage(1);
-  }, [category]);
+  }, [category, searchQuery]);
 
   const skeletons = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
   // const handlePageChange = () => {

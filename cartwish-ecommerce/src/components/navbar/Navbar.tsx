@@ -10,6 +10,7 @@ import { NavLink } from "react-router-dom";
 import UserContext from "../../contexts/UserContext";
 import { useContext } from "react";
 import cartContext from "../../contexts/CartContext";
+import Search from "./Search/Search";
 const Navbar = () => {
   const user = useContext(UserContext);
   const cartValue = useContext(cartContext);
@@ -18,16 +19,7 @@ const Navbar = () => {
     <nav className="navbar align-center">
       <div className="align-center">
         <h1 className="navbar_heading">CartWish</h1>
-        <form className="navbar_form align-center">
-          <input
-            type="text"
-            className="navbar_search"
-            placeholder="Search Products"
-          />
-          <button type="submit" className="search_button">
-            Search
-          </button>
-        </form>
+        <Search />
       </div>
       <div className="navbar_links align-center">
         <LinkWithIcon title="Home" link="/" emoji={rocket} sidebar={false} />

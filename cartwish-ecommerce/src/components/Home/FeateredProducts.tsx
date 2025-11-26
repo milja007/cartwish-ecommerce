@@ -17,8 +17,7 @@ interface Product {
 
 const FeateredProducts = () => {
   const { data, isLoading, error } = useData<Product[]>("/products/featured");
-  // const { productsArrays } = data.products;
-  console.log(data);
+
   return (
     <section className="featered_products">
       <h2>Featered Products</h2>
