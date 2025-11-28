@@ -1,5 +1,6 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+//moram sa curom ic se druzit danas nazalost
 
 const Search = () => {
   const [search, setSearch] = useState("");
