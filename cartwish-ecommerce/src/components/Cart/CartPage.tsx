@@ -4,7 +4,7 @@ import UserContext from "../../contexts/UserContext";
 import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
-import { useState, useEffect, useContext } from "react";
+import { useContext, useMemo } from "react";
 import { checkoutAPI } from "../../services/orderServices";
 import { toast } from "react-toastify";
 
@@ -21,19 +21,18 @@ type CartItem = {
 };
 
 const CartPage = () => {
-  const [subtotal, setSubtotal] = useState(0);
   const user = useContext(UserContext);
   const cartContextValue = useContext(cartContext);
   const removeFromCart = cartContextValue?.removeFromCart;
   const cart = cartContextValue?.cart;
   const updateCart = cartContextValue?.updateCart;
   const setCart = cartContextValue?.setCart;
-  useEffect(() => {
+  const subTotal = useMemo(() => {
     let total = 0;
     cart?.forEach((item: CartItem) => {
       total += item.product.price * item.quantity;
     });
-    setSubtotal(total);
+    return total;
   }, [cart]);
 
   const checkout = () => {
@@ -96,7 +95,7 @@ const CartPage = () => {
         <tbody>
           <tr>
             <td>Subtotal</td>
-            <td>${subtotal}</td>
+            <td>${subTotal}</td>
           </tr>
           <tr>
             <td>Shipping Charge</td>
@@ -104,7 +103,7 @@ const CartPage = () => {
           </tr>
           <tr className="cart_bill_final">
             <td>Total</td>
-            <td>${subtotal + 5}</td>
+            <td>${subTotal + 5}</td>
           </tr>
         </tbody>
       </table>
