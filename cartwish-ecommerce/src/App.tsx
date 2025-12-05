@@ -2,7 +2,7 @@ import "./App.css";
 import UserContext from "./contexts/UserContext";
 import Navbar from "./components/Navbar/Navbar";
 import Routing from "./components/Routing/Routing";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getJwt, getUser } from "./services/userServices";
 import setAuthToken from "./utils/setAuthToken";
 import {
@@ -21,9 +21,16 @@ interface JwtPayload {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
+interface Product {
+  _id: string;
+  title: string;
+  price: number;
+  stock: number;
+  images: string[];
+}
+
 interface CartItem {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  product: any;
+  product: Product;
   quantity: number;
 }
 setAuthToken(getJwt());
@@ -46,78 +53,87 @@ const App = () => {
           setUser(jwtUser as JwtPayload);
         }
       }
-    } catch {
-      // Prešutno ignoriši greške ako token ne postoji ili je nevažeći
+    } catch (err) {
+      toast.error("Something went wrong");
+      console.log(err);
     }
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const addToCart = (product: any, quantity: number) => {
-    const updatedCart = [...cart];
-    const productIndex = updatedCart.findIndex(
-      (item) => item.product._id === product._id
-    );
-    if (productIndex === -1) {
-      updatedCart.push({ product, quantity });
-    }
-    if (productIndex !== -1) {
-      updatedCart[productIndex].quantity += quantity;
-    }
-    setCart(updatedCart);
-    addToCartAPI(product._id, quantity)
-      .then(() => {
-        toast.success("Product Added Succesfully");
-      })
-      .catch(() => {
-        toast.error("Failed to Add Product");
-        setCart(cart);
+  const addToCart = useCallback(
+    (product: Product, quantity: number) => {
+      const updatedCart = [...cart];
+      const productIndex = updatedCart.findIndex(
+        (item) => item.product._id === product._id
+      );
+      if (productIndex === -1) {
+        updatedCart.push({ product, quantity });
+      }
+      if (productIndex !== -1) {
+        updatedCart[productIndex].quantity += quantity;
+      }
+      setCart(updatedCart);
+      addToCartAPI(product._id, quantity)
+        .then(() => {
+          toast.success("Product Added Succesfully");
+        })
+        .catch(() => {
+          toast.error("Failed to Add Product");
+          setCart(cart);
+        });
+    },
+    [cart]
+  );
+  const removeFromCart = useCallback(
+    (id: string | number) => {
+      const oldCart = [...cart];
+      const newCart = oldCart.filter((item) => item.product._id !== id);
+      setCart(newCart);
+      removeFromCartAPI(id).catch(() => {
+        toast.error("Something went wrong");
+        setCart(oldCart);
       });
-  };
-  const removeFromCart = (id: string | number) => {
-    const oldCart = [...cart];
-    const newCart = oldCart.filter((item) => item.product._id !== id);
-    setCart(newCart);
-    removeFromCartAPI(id).catch(() => {
-      toast.error("Something went wrong");
-      setCart(oldCart);
-    });
-  };
-  const getCart = () => {
+    },
+    [cart]
+  );
+  const getCart = useCallback(() => {
     getCartAPI()
       .then((res) => {
         setCart(res.data);
       })
       .catch(() => toast.error("Something went wrong!"));
-  };
+  }, []);
 
-  const updateCart = (id: number | string, type: "increase" | "decrease") => {
-    const OldCart = [...cart];
-    const updatedCart = [...cart];
-    const productIndex = updatedCart.findIndex(
-      (item) => item.product._id === id
-    );
-    if (type === "increase") {
-      updatedCart[productIndex].quantity += 1;
-      setCart(updatedCart);
-      increaseProductAPI(id).catch(() => {
-        toast.error("Something went wrong");
-        setCart(OldCart);
-      });
-    }
-    if (type === "decrease") {
-      updatedCart[productIndex].quantity -= 1;
-      setCart(updatedCart);
-      decreaseProductAPI(id).catch(() => {
-        toast.error("Something went wrong");
-        setCart(OldCart);
-      });
-    }
-  };
+  const updateCart = useCallback(
+    (id: number | string, type: "increase" | "decrease") => {
+      const OldCart = [...cart];
+      const updatedCart = [...cart];
+      const productIndex = updatedCart.findIndex(
+        (item) => item.product._id === id
+      );
+      if (type === "increase") {
+        updatedCart[productIndex].quantity += 1;
+        setCart(updatedCart);
+        increaseProductAPI(id).catch(() => {
+          toast.error("Something went wrong");
+          setCart(OldCart);
+        });
+      }
+      if (type === "decrease") {
+        updatedCart[productIndex].quantity -= 1;
+        setCart(updatedCart);
+        decreaseProductAPI(id).catch(() => {
+          toast.error("Something went wrong");
+          setCart(OldCart);
+        });
+      }
+    },
+    [cart]
+  );
   useEffect(() => {
     if (user) {
       getCart();
     }
-  }, [user]);
+  }, [user, getCart]);
 
   return (
     <UserContext.Provider value={user}>

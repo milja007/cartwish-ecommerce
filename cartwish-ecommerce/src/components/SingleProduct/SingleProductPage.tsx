@@ -3,7 +3,7 @@ import "./SingleProductPage.css";
 // import iphoneProImage from "../../assets/iphone-14-pro.webp";
 // import macImage from "../../assets/mac-system-cut.jfif";
 // import userImage from "../../assets/user.webp";
-import { useState } from "react";
+import { useState, memo } from "react";
 import QuantityInput from "./QuantityInput";
 import useData from "../../hooks/useData";
 import { useParams } from "react-router-dom";
@@ -100,4 +100,4 @@ const SingleProductPage = () => {
   );
 };
 
-export default SingleProductPage;
+export default memo(SingleProductPage);

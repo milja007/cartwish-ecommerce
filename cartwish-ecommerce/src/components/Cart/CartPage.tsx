@@ -4,7 +4,7 @@ import UserContext from "../../contexts/UserContext";
 import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, memo } from "react";
 import { checkoutAPI } from "../../services/orderServices";
 import { toast } from "react-toastify";
 
@@ -114,4 +114,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default memo(CartPage);

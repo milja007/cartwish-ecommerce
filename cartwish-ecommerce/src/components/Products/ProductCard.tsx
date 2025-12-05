@@ -2,7 +2,7 @@ import "./ProductCard.css";
 import star from "../../assets/white-star.png";
 import basket from "../../assets/basket.png";
 import { NavLink } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, memo } from "react";
 import cartContext from "../../contexts/CartContext";
 import UserContext from "../../contexts/UserContext";
 
@@ -58,4 +58,4 @@ const ProductCard = ({ product }: ProductCardProps) => {
   );
 };
 
-export default ProductCard;
+export default memo(ProductCard);
