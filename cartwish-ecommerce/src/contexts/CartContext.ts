@@ -1,4 +1,4 @@
-import { createContext, Dispatch, SetStateAction } from "react";
+import { createContext } from "react";
 
 interface CartItem {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,7 +12,6 @@ interface CartContextType {
   cart: CartItem[];
   removeFromCart: (id: string | number) => void;
   updateCart: (id: string | number, type: "increase" | "decrease") => void;
-  setCart: Dispatch<SetStateAction<CartItem[]>>;
 }
 
 const cartContext = createContext<CartContextType | null>(null);

@@ -2,7 +2,8 @@ import "./App.css";
 import UserContext from "./contexts/UserContext";
 import Navbar from "./components/Navbar/Navbar";
 import Routing from "./components/Routing/Routing";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useReducer } from "react";
+
 import { getJwt, getUser } from "./services/userServices";
 import setAuthToken from "./utils/setAuthToken";
 import {
@@ -15,6 +16,7 @@ import {
 import { ToastContainer, toast } from "react-toastify/unstyled";
 import "react-toastify/dist/ReactToastify.css";
 import cartContext from "./contexts/CartContext";
+import cartReducer from "./reducers/cartReducer";
 
 interface JwtPayload {
   exp: number;
@@ -29,14 +31,16 @@ interface Product {
   images: string[];
 }
 
-interface CartItem {
+type CartItem = {
   product: Product;
   quantity: number;
-}
+};
+
 setAuthToken(getJwt());
 const App = () => {
   const [user, setUser] = useState<JwtPayload | null>(null);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  // const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, dispatch] = useReducer(cartReducer, [] as CartItem[]);
   useEffect(() => {
     try {
       {
@@ -61,36 +65,28 @@ const App = () => {
 
   const addToCart = useCallback(
     (product: Product, quantity: number) => {
-      const updatedCart = [...cart];
-      const productIndex = updatedCart.findIndex(
-        (item) => item.product._id === product._id
-      );
-      if (productIndex === -1) {
-        updatedCart.push({ product, quantity });
-      }
-      if (productIndex !== -1) {
-        updatedCart[productIndex].quantity += quantity;
-      }
-      setCart(updatedCart);
+      dispatch({
+        type: "ADD_TO_CART",
+        payload: { product, quantity },
+      });
       addToCartAPI(product._id, quantity)
         .then(() => {
           toast.success("Product Added Succesfully");
         })
         .catch(() => {
           toast.error("Failed to Add Product");
-          setCart(cart);
+          dispatch({ type: "REVERT_CART", payload: { cart } });
         });
     },
     [cart]
   );
   const removeFromCart = useCallback(
     (id: string | number) => {
-      const oldCart = [...cart];
-      const newCart = oldCart.filter((item) => item.product._id !== id);
-      setCart(newCart);
+      dispatch({ type: "REMOVE_FROM_CART", payload: { id } });
+
       removeFromCartAPI(id).catch(() => {
         toast.error("Something went wrong");
-        setCart(oldCart);
+        dispatch({ type: "REVERT_CART", payload: { cart } });
       });
     },
     [cart]
@@ -98,32 +94,31 @@ const App = () => {
   const getCart = useCallback(() => {
     getCartAPI()
       .then((res) => {
-        setCart(res.data);
+        dispatch({ type: "GET_CART", payload: { products: res.data } });
       })
       .catch(() => toast.error("Something went wrong!"));
   }, []);
 
   const updateCart = useCallback(
     (id: number | string, type: "increase" | "decrease") => {
-      const OldCart = [...cart];
       const updatedCart = [...cart];
       const productIndex = updatedCart.findIndex(
         (item) => item.product._id === id
       );
       if (type === "increase") {
         updatedCart[productIndex].quantity += 1;
-        setCart(updatedCart);
+        dispatch({ type: "GET_CART", payload: { products: updatedCart } });
         increaseProductAPI(id).catch(() => {
           toast.error("Something went wrong");
-          setCart(OldCart);
+          dispatch({ type: "REVERT_CART", payload: { cart } });
         });
       }
       if (type === "decrease") {
         updatedCart[productIndex].quantity -= 1;
-        setCart(updatedCart);
+        dispatch({ type: "GET_CART", payload: { products: updatedCart } });
         decreaseProductAPI(id).catch(() => {
           toast.error("Something went wrong");
-          setCart(OldCart);
+          dispatch({ type: "REVERT_CART", payload: { cart } });
         });
       }
     },
@@ -138,7 +133,7 @@ const App = () => {
   return (
     <UserContext.Provider value={user}>
       <cartContext.Provider
-        value={{ addToCart, cart, removeFromCart, updateCart, setCart }}
+        value={{ addToCart, cart, removeFromCart, updateCart }}
       >
         <div className="app">
           <Navbar />

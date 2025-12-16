@@ -26,7 +26,6 @@ const CartPage = () => {
   const removeFromCart = cartContextValue?.removeFromCart;
   const cart = cartContextValue?.cart;
   const updateCart = cartContextValue?.updateCart;
-  const setCart = cartContextValue?.setCart;
   const subTotal = useMemo(() => {
     let total = 0;
     cart?.forEach((item: CartItem) => {
@@ -36,15 +35,12 @@ const CartPage = () => {
   }, [cart]);
 
   const checkout = () => {
-    const oldCart = [...(cart ?? [])];
-    setCart?.([]);
     checkoutAPI()
       .then(() => {
         toast.success("Order Placed Successfully!");
       })
       .catch(() => {
         toast.error("Something went wrong!");
-        setCart?.(oldCart);
       });
   };
   return (
