@@ -5,7 +5,6 @@ import remove from "../../assets/remove.png";
 import Table from "../Common/Table";
 import QuantityInput from "../SingleProduct/QuantityInput";
 import { useContext, useMemo, memo } from "react";
-import { checkoutAPI } from "../../services/orderServices";
 import { toast } from "react-toastify";
 
 type CartProduct = {
@@ -26,6 +25,7 @@ const CartPage = () => {
   const removeFromCart = cartContextValue?.removeFromCart;
   const cart = cartContextValue?.cart;
   const updateCart = cartContextValue?.updateCart;
+  const checkout = cartContextValue?.checkout;
   const subTotal = useMemo(() => {
     let total = 0;
     cart?.forEach((item: CartItem) => {
@@ -34,14 +34,12 @@ const CartPage = () => {
     return total;
   }, [cart]);
 
-  const checkout = () => {
-    checkoutAPI()
-      .then(() => {
-        toast.success("Order Placed Successfully!");
-      })
-      .catch(() => {
-        toast.error("Something went wrong!");
-      });
+  const handleCheckout = () => {
+    if (!checkout) {
+      toast.error("Checkout trenutno nije dostupan");
+      return;
+    }
+    checkout();
   };
   return (
     <section className="align-center cart_page">
@@ -103,7 +101,11 @@ const CartPage = () => {
           </tr>
         </tbody>
       </table>
-      <button className="search_button checkout_button" onClick={checkout}>
+      <button
+        className="search_button checkout_button"
+        onClick={handleCheckout}
+        disabled={!cart || cart.length === 0}
+      >
         Checkout
       </button>
     </section>

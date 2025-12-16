@@ -13,6 +13,7 @@ import {
   increaseProductAPI,
   removeFromCartAPI,
 } from "./services/cartSevices";
+import { checkoutAPI } from "./services/orderServices";
 import { ToastContainer, toast } from "react-toastify/unstyled";
 import "react-toastify/dist/ReactToastify.css";
 import cartContext from "./contexts/CartContext";
@@ -63,8 +64,20 @@ const App = () => {
     }
   }, []);
 
+  const getCart = useCallback(async () => {
+    try {
+      const res = await getCartAPI();
+      dispatch({ type: "GET_CART", payload: { products: res.data } });
+      return res.data as CartItem[];
+    } catch {
+      toast.error("Something went wrong!");
+      return null;
+    }
+  }, []);
+
   const addToCart = useCallback(
     (product: Product, quantity: number) => {
+      const previousCart = [...cart];
       dispatch({
         type: "ADD_TO_CART",
         payload: { product, quantity },
@@ -72,58 +85,151 @@ const App = () => {
       addToCartAPI(product._id, quantity)
         .then(() => {
           toast.success("Product Added Succesfully");
+          getCart();
         })
-        .catch(() => {
-          toast.error("Failed to Add Product");
-          dispatch({ type: "REVERT_CART", payload: { cart } });
+        .catch((err: unknown) => {
+          const apiMessage =
+            (
+              err as {
+                response?: { data?: { message?: string; error?: string } };
+              }
+            )?.response?.data?.message ||
+            (
+              err as {
+                response?: { data?: { message?: string; error?: string } };
+              }
+            )?.response?.data?.error;
+          toast.error(apiMessage ?? "Failed to Add Product");
+          dispatch({ type: "REVERT_CART", payload: { cart: previousCart } });
         });
     },
-    [cart]
+    [cart, getCart]
   );
   const removeFromCart = useCallback(
     (id: string | number) => {
+      const previousCart = [...cart];
       dispatch({ type: "REMOVE_FROM_CART", payload: { id } });
 
-      removeFromCartAPI(id).catch(() => {
-        toast.error("Something went wrong");
-        dispatch({ type: "REVERT_CART", payload: { cart } });
-      });
+      removeFromCartAPI(id)
+        .then(() => getCart())
+        .catch((err: unknown) => {
+          const apiMessage =
+            (
+              err as {
+                response?: { data?: { message?: string; error?: string } };
+              }
+            )?.response?.data?.message ||
+            (
+              err as {
+                response?: { data?: { message?: string; error?: string } };
+              }
+            )?.response?.data?.error;
+          toast.error(apiMessage ?? "Something went wrong");
+          dispatch({ type: "REVERT_CART", payload: { cart: previousCart } });
+        });
     },
-    [cart]
+    [cart, getCart]
   );
-  const getCart = useCallback(() => {
-    getCartAPI()
-      .then((res) => {
-        dispatch({ type: "GET_CART", payload: { products: res.data } });
-      })
-      .catch(() => toast.error("Something went wrong!"));
-  }, []);
-
   const updateCart = useCallback(
     (id: number | string, type: "increase" | "decrease") => {
       const updatedCart = [...cart];
       const productIndex = updatedCart.findIndex(
         (item) => item.product._id === id
       );
+      if (productIndex === -1) return;
+
+      const previousCart = [...cart];
       if (type === "increase") {
         updatedCart[productIndex].quantity += 1;
         dispatch({ type: "GET_CART", payload: { products: updatedCart } });
-        increaseProductAPI(id).catch(() => {
-          toast.error("Something went wrong");
-          dispatch({ type: "REVERT_CART", payload: { cart } });
-        });
+        increaseProductAPI(id)
+          .then(() => getCart())
+          .catch((err: unknown) => {
+            const apiMessage =
+              (
+                err as {
+                  response?: { data?: { message?: string; error?: string } };
+                }
+              )?.response?.data?.message ||
+              (
+                err as {
+                  response?: { data?: { message?: string; error?: string } };
+                }
+              )?.response?.data?.error;
+            toast.error(apiMessage ?? "Something went wrong");
+            dispatch({ type: "REVERT_CART", payload: { cart: previousCart } });
+          });
       }
       if (type === "decrease") {
         updatedCart[productIndex].quantity -= 1;
         dispatch({ type: "GET_CART", payload: { products: updatedCart } });
-        decreaseProductAPI(id).catch(() => {
-          toast.error("Something went wrong");
-          dispatch({ type: "REVERT_CART", payload: { cart } });
-        });
+        decreaseProductAPI(id)
+          .then(() => getCart())
+          .catch((err: unknown) => {
+            const apiMessage =
+              (
+                err as {
+                  response?: { data?: { message?: string; error?: string } };
+                }
+              )?.response?.data?.message ||
+              (
+                err as {
+                  response?: { data?: { message?: string; error?: string } };
+                }
+              )?.response?.data?.error;
+            toast.error(apiMessage ?? "Something went wrong");
+            dispatch({ type: "REVERT_CART", payload: { cart: previousCart } });
+          });
       }
     },
-    [cart]
+    [cart, getCart]
   );
+  const checkout = useCallback(async () => {
+    if (!cart.length) {
+      toast.info("Košarica je prazna");
+      return;
+    }
+
+    // Prije checkouta sync-aj košaricu s backendom da cijene/količine budu točne
+    const refreshedCart = (await getCart()) ?? cart;
+
+    const unavailableItem = refreshedCart.find(
+      (item) => item.quantity > item.product.stock
+    );
+
+    if (unavailableItem) {
+      toast.error(`Nema dovoljno zaliha za ${unavailableItem.product.title}`);
+      return;
+    }
+
+    // Optimistički ispraznimo košaricu da se UI odmah osvježi;
+    // ako API padne, vratit ćemo stari sadržaj.
+    const previousCart = [...refreshedCart];
+    dispatch({ type: "CLEAR_CART" });
+
+    checkoutAPI()
+      .then((res) => {
+        toast.success(res?.data?.message ?? "Narudžba je zaprimljena");
+        // Za svaki slučaj povuci svježi cart sa servera.
+        getCart();
+      })
+      .catch((err: unknown) => {
+        const apiMessage =
+          (
+            err as {
+              response?: { data?: { message?: string; error?: string } };
+            }
+          )?.response?.data?.message ||
+          (
+            err as {
+              response?: { data?: { message?: string; error?: string } };
+            }
+          )?.response?.data?.error;
+
+        dispatch({ type: "REVERT_CART", payload: { cart: previousCart } });
+        toast.error(apiMessage ?? "Nešto je pošlo po zlu");
+      });
+  }, [cart, getCart]);
   useEffect(() => {
     if (user) {
       getCart();
@@ -133,7 +239,7 @@ const App = () => {
   return (
     <UserContext.Provider value={user}>
       <cartContext.Provider
-        value={{ addToCart, cart, removeFromCart, updateCart }}
+        value={{ addToCart, cart, removeFromCart, updateCart, checkout }}
       >
         <div className="app">
           <Navbar />

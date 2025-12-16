@@ -3,7 +3,6 @@ import { getUser } from "../../services/userServices";
 
 const ProtectedRoute = () => {
   const location = useLocation();
-  console.log(location);
   return getUser() ? (
     <Outlet />
   ) : (

@@ -15,7 +15,8 @@ type CartAction =
   | { type: "ADD_TO_CART"; payload: { product: CartProduct; quantity: number } }
   | { type: "GET_CART"; payload: { products: CartItem[] } }
   | { type: "REVERT_CART"; payload: { cart: CartItem[] } }
-  | { type: "REMOVE_FROM_CART"; payload: { id: string | number } };
+  | { type: "REMOVE_FROM_CART"; payload: { id: string | number } }
+  | { type: "CLEAR_CART" };
 
 const cartReducer = (cart: CartItem[], action: CartAction): CartItem[] => {
   switch (action.type) {
@@ -47,6 +48,8 @@ const cartReducer = (cart: CartItem[], action: CartAction): CartItem[] => {
       );
       return newCart;
     }
+    case "CLEAR_CART":
+      return [];
     default:
       return cart;
   }

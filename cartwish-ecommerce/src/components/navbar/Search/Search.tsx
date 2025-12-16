@@ -53,7 +53,7 @@ const Search = () => {
       if (search.trim() !== "") {
         getSuggestionsAPI(search)
           .then((res) => setSuggestions(res.data))
-          .catch((err) => console.log(err));
+          .catch(() => setSuggestions([]));
       }
       if (search.trim() === "") {
         setSuggestions([]);
@@ -62,9 +62,6 @@ const Search = () => {
 
     return () => clearTimeout(delaySuggestions);
   }, [search]);
-
-  console.log(suggestions);
-
   return (
     <form className="navbar_form align-center" onSubmit={handleSubmit}>
       <input
